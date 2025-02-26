@@ -54,7 +54,7 @@ func (s ParcelStore) GetByClient(client int) ([]Parcel, error) {
 	row, err := s.db.Query("SELECT number, client, status, address, created_at from parcel where client = :client",
 		sql.Named("client", client))
 	if err != nil {
-		return res, err
+		return nil, err
 	}
 	defer row.Close()
 	// заполните срез Parcel данными из таблицы
@@ -84,16 +84,18 @@ func (s ParcelStore) SetAddress(number int, address string) error {
 	// реализуйте обновление адреса в таблице parcel
 	// менять адрес можно только если значение статуса registered
 
-	_, err := s.db.Exec("update parcel set address = :address where number = :number",
+	_, err := s.db.Exec("update parcel set address = :address where number = :number and status = :status",
 		sql.Named("address", address),
-		sql.Named("number", number))
+		sql.Named("number", number),
+		sql.Named("status", "registered"))
 	return err
 }
 
 func (s ParcelStore) Delete(number int) error {
 	// реализуйте удаление строки из таблицы parcel
 	// удалять строку можно только если значение статуса registered
-	_, err := s.db.Exec("delete from parcel where number = :number",
-		sql.Named("number", number))
+	_, err := s.db.Exec("delete from parcel where number = :number and status = :status",
+		sql.Named("number", number),
+		sql.Named("status", "registered"))
 	return err
 }

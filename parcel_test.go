@@ -54,8 +54,7 @@ func TestAddGetDelete(t *testing.T) {
 	// проверьте, что посылку больше нельзя получить из БД
 	err = store.Delete(id)
 	require.NoError(t, err)
-	//для проверки, что посылку получить нельзя попытался использовать данную строчку но
-	//почему, то пишет ошибку assert.ErrorIs(t, err, sql.ErrNoRows)
+	assert.ErrorIs(t, store.Delete(id), err)
 
 }
 
